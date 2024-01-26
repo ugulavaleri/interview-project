@@ -1,43 +1,31 @@
 <?php
 
-namespace Database\Seeders;
+    namespace Database\Seeders;
 
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use App\Models\Category;
-use App\Models\Product;
-use App\Models\User;
-use Illuminate\Database\Seeder;
+    // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+    use App\Models\Category;
+    use App\Models\Product;
+    use App\Models\User;
+    use Illuminate\Database\Seeder;
 
-class DatabaseSeeder extends Seeder
-{
-    /**
-     * Seed the application's database.
-     */
-    public function run(): void
+    class DatabaseSeeder extends Seeder
     {
-         $users = User::factory(10)->create();
-
-
-
-        for ($i = 0;$i < 20;$i++) {
-            $user = $users->shuffle()->first();
-            Product::factory()->create([
-                'user_id' => $user->id
+        /**
+         * Seed the application's database.
+         */
+        public function run(): void
+        {
+            $this->call([
+                UserSeeder::class,
+                CategorySeeder::class,
+                ProductSeeder::class
             ]);
+
+            $categories = Category::all();
+            foreach (Product::all() as $product) {
+                $product->categories()->attach(
+                    $categories->random(rand(1, 3))->pluck('id')->toArray()
+                );
+            }
         }
-
-        $categories = Category::factory(5)->create();
-
-        foreach (Product::all() as $product) {
-            $product->categories()->attach(
-                $categories->random(rand(1, 3))->pluck('id')->toArray()
-            );
-        }
-
-        // \App\Models\User::factory()->create([
-        //     'name' => 'Test User',
-        //     'email' => 'test@example.com',
-        // ]);
     }
-
-}
