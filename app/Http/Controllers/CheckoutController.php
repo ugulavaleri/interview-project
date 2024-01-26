@@ -11,6 +11,7 @@ class CheckoutController extends Controller
         $totalPrice = 0;
         foreach ($cartItems as $cartItem) {
             $totalPrice += $cartItem->quantity * $cartItem->product->price;
+            $cartItem->delete();
         }
 
         return response()->json(['total_price' => $totalPrice]);
